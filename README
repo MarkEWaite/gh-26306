@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Plugin version is not updated when using Jenkins UI to downgrade a plugin
+#
+# https://github.com/jenkinsci/jenkins/issues/26306
