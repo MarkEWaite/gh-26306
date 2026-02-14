@@ -1,0 +1,18 @@
+jenkins:
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+  numExecutors: 1
+  quietPeriod: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: "${USER}"
+        name: "Mark Waite"
+        # Password is set in init.groovy.d
+unclassified:
+  location:
+    adminAddress: "${USER}@example.com"
+    url: "http://${HOSTNAME}:8080/"
