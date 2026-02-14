@@ -6,6 +6,6 @@ def jenkins = Jenkins.getInstance()
 if (jenkins.getSecurityRealm() instanceof HudsonPrivateSecurityRealm) {
   // Set password, let CasC handle the rest of the configuration
   def username = System.getProperty('user.name')
-  def password = username
+  def password = username + "-1234"
   jenkins.getSecurityRealm().createAccount(username, password)
 }
