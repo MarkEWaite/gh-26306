@@ -9,8 +9,8 @@ jenkins:
       allowsSignup: false
       enableCaptcha: false
       users:
-      - id: "${USER}"
-        name: "Mark Waite"
+      - id: "jenkins"
+        name: "Butler"
         # Password is set in init.groovy.d
 unclassified:
   location:
