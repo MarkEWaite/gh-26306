@@ -5,6 +5,9 @@
 # https://github.com/jenkinsci/jenkins/issues/26306
 
 last_version=$(docker images | grep gh-26306 | sed 's,^gh-26306:,,g' | sort -r -n | head -n 1 | awk '{print $1}')
+if [ "$last_version" = "" ]; then
+  last_version=0
+fi
 version=$((last_version + 1))
 docker buildx build --tag gh-26306:$version .
 docker run --rm --detach -p 8080:8080 gh-26306:$version
