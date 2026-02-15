@@ -103,7 +103,7 @@ jquery3-api:3.7.1-619.vdb_10e002501a_
 jsch:0.2.16-95.v3eecb_55fa_b_78
 json-api:20251224-185.v0cc18490c62c
 json-path-api:2.10.0-202.va_9cc16c1e476
-junit:1369.v15da_00283f06
+junit:1396.v095840ed8491
 lockable-resources:1438.v3c0f8c9e2060
 mailer:525.v2458b_d8a_1a_71
 matrix-auth:3.2.9
