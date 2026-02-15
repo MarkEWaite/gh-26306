@@ -126,12 +126,6 @@ def push_current_branch():
 def checkout_branch(target_branch):
     subprocess.check_call(["git", "clean", "-xffd"])
     subprocess.check_call(["git", "reset", "--hard", "HEAD"])
-    # -with-plugins branches contain large binaries
-    if target_branch.endswith("-with-plugins"):
-        subprocess.check_call(["git", "lfs", "fetch", "public", "public/" + target_branch])
-    # cjt-with-plugins-add-credentials contains some large binaries
-    if target_branch == "cjt-with-plugins-add-credentials":
-        subprocess.check_call(["git", "lfs", "fetch", "private", "private/" + target_branch])
     subprocess.check_call(["git", "checkout", target_branch])
     subprocess.check_call(["git", "pull"])
 
