@@ -52,65 +52,6 @@ def compute_tag(branch_name):
 
 #-----------------------------------------------------------------------
 
-def is_home_network():
-    from socket import socket, SOCK_DGRAM, AF_INET
-    s = socket(AF_INET, SOCK_DGRAM)
-    s.settimeout(1.0)
-    try:
-        s.connect(("google.com", 0))
-    except:
-        return True
-    return s.getsockname()[0].startswith("172")
-
-#-----------------------------------------------------------------------
-
-def get_fqdn():
-    fqdn = socket.getfqdn()
-    if not "." in fqdn:
-        if is_home_network():
-            fqdn = fqdn + ".markwaite.net"
-        else:
-            fqdn = fqdn + ".example.com"
-    return fqdn
-
-#-----------------------------------------------------------------------
-
-# Fully qualified domain name of the host running this script
-fqdn = get_fqdn()
-
-#-----------------------------------------------------------------------
-
-def replace_text_recursively(find, replace, include_pattern):
-    print(("Replacing '" + find + "' with '" + replace + "', in files matching '" + include_pattern + "'"))
-    # Thanks to https://stackoverflow.com/questions/4205854/python-way-to-recursively-find-and-replace-string-in-text-files
-    for path, dirs, files in os.walk(os.path.abspath("ref")):
-        for filename in fnmatch.filter(files, include_pattern):
-            filepath = os.path.join(path, filename)
-            with open(filepath) as f:
-                s = f.read()
-            s = s.replace(find, replace)
-            with open(filepath, "w") as f:
-                f.write(s)
-
-#-----------------------------------------------------------------------
-
-def replace_constants_in_ref():
-    if not os.path.isdir("ref"):
-        return
-    replacements = { "localhost" : fqdn, "JENKINS_ADVERTISED_HOSTNAME" : fqdn, "JENKINS_HOSTNAME" : fqdn, "LOGNAME" : getpass.getuser() }
-    for find in replacements:
-        replace_text_recursively(find, replacements[find], "*.xml")
-
-#-----------------------------------------------------------------------
-
-def undo_replace_constants_in_ref():
-    if not os.path.isdir("ref"):
-        return
-    command = [ "git", "checkout", "--", "ref" ]
-    subprocess.check_call(command)
-
-#-----------------------------------------------------------------------
-
 def get_available_updates_command(base_jenkins_version):
     available_updates_command = [ "files/jenkins-plugin-cli.sh", "--jenkins-version", base_jenkins_version,
                                   "-d", "ref/plugins",
@@ -151,7 +92,6 @@ def update_plugins(base_jenkins_version):
 
     update_plugins_output = subprocess.check_output(get_available_updates_command(base_jenkins_version)).strip().decode("utf-8")
     if "has an available update" in update_plugins_output:
-        undo_replace_constants_in_ref()
         print("Plugin update available")
         print("Stopping because a plugin update is available: " + update_plugins_output)
         report_update_plugins_commands(base_jenkins_version)
@@ -160,46 +100,16 @@ def update_plugins(base_jenkins_version):
 #-----------------------------------------------------------------------
 
 def build_one_image(branch_name, clean):
-    replace_constants_in_ref()
-    if branch_name in ["lts-with-plugins", "weekly-with-plugins", "lts-with-plugins-add-credentials-and-nodes-rc"]:
-        base_jenkins_version = compute_jenkins_base_version(branch_name, True)
-        print(("Updating plugins for " + base_jenkins_version))
-        update_plugins(base_jenkins_version)
     tag = compute_tag(branch_name)
     print("Building " + tag + " from " + get_dockerfile(tag))
     command = [ "docker", "buildx", "build",
                     "--load",
-                    "--add-host", "home.markwaite.net:216.110.174.159",
                     "--file", get_dockerfile(tag),
                     "--tag", tag,
               ]
     if clean:
         command.extend([ "--pull", "--no-cache" ])
     command.extend([ ".", ])
-    subprocess.check_call(command)
-    undo_replace_constants_in_ref()
-
-#-----------------------------------------------------------------------
-
-def get_predecessor_branch(current_branch, all_branches):
-    last = "upstream/" + current_branch
-    if current_branch == "lts":
-        last = "upstream/master"
-    if current_branch == "weekly":
-        last = "upstream/master"
-    for branch in all_branches:
-        if branch == current_branch:
-            return last
-        if current_branch.startswith(branch):
-            last = branch
-    return last
-
-#-----------------------------------------------------------------------
-
-def merge_predecessor_branch(current_branch, all_branches):
-    predecessor_branch = get_predecessor_branch(current_branch, all_branches)
-    command = [ "git", "merge", "--no-edit", predecessor_branch ]
-    print(("Merging from " + predecessor_branch + " to " + current_branch))
     subprocess.check_call(command)
 
 #-----------------------------------------------------------------------
@@ -255,7 +165,6 @@ Build docker images.   Use -h for help."""
     for branch in branches:
         print(("Building " + branch))
         checkout_branch(branch)
-        merge_predecessor_branch(branch, all_branches)
         build_one_image(branch, options.clean)
         push_current_branch()
 
