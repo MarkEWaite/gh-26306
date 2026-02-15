@@ -48,7 +48,7 @@ def compute_jenkins_base_version(branch_name, numeric_only):
 
 def compute_tag(branch_name):
     jenkins_base_version = compute_jenkins_base_version(branch_name, False)
-    return "markewaite/" + branch_name + ":" + jenkins_base_version
+    return "gh-26306/" + branch_name + ":" + jenkins_base_version
 
 #-----------------------------------------------------------------------
 
