@@ -5,7 +5,6 @@ apache-httpcomponents-client-5-api:5.6-183.ve5a_8a_b_e71e59
 asm-api:9.9.1-189.vb_5ef2964da_91
 authentication-tokens:1.144.v5ff4a_5ec5c33
 aws-credentials:254.v978a_5e206a_d7
-aws-java-sdk:1.12.780-480.v4a_0819121a_9e
 aws-java-sdk-api-gateway:1.12.780-480.v4a_0819121a_9e
 aws-java-sdk-autoscaling:1.12.780-480.v4a_0819121a_9e
 aws-java-sdk-cloudformation:1.12.780-480.v4a_0819121a_9e
