@@ -2,7 +2,7 @@ jenkins:
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: true
-  numExecutors: 1
+  numExecutors: 0
   quietPeriod: 0
   securityRealm:
     local:
