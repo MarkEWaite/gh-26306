@@ -3,3 +3,7 @@
 # Plugin version is not updated when using Jenkins UI to downgrade a plugin
 #
 # https://github.com/jenkinsci/jenkins/issues/26306
+
+last_version=$(docker images | grep gh-26306 | sed 's,^gh-26306:,,g' | sort -r -n | head -n 1 | awk '{print $1}')
+version=$((last_version + 1))
+docker buildx build --tag gh-26306:$version .
